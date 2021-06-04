@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { User, Event, Occurrence } from "models";
 
 /* Fetching */
 
@@ -7,20 +8,17 @@ export const NICE_SERVER_URL =
     ? "http://localhost:9000"
     : window.location.origin;
 
-async function niceFetch(
-  path: string,
-  config?: RequestInit
-): Promise<Response> {
+async function niceFetch(path: string, config?: RequestInit) {
   path = NICE_SERVER_URL + path;
   config = { credentials: "include", ...config };
   return fetch(path, config);
 }
 
-async function niceFetchJSON(path: string, config?: RequestInit): Promise<any> {
+async function niceFetchJSON(path: string, config?: RequestInit) {
   return niceFetch(path, config).then((res) => res.json());
 }
 
-async function niceGET<T>(path: string): Promise<any> {
+async function niceGET(path: string) {
   return niceFetchJSON(path);
 }
 
@@ -31,7 +29,7 @@ const getJSONHeaders = (): HeadersInit => {
   };
 };
 
-async function nicePOST<T>(path: string, body: object): Promise<any> {
+async function nicePOST(path: string, body: object) {
   return niceFetchJSON(path, {
     method: "POST",
     headers: getJSONHeaders(),
@@ -41,20 +39,20 @@ async function nicePOST<T>(path: string, body: object): Promise<any> {
 
 /* Transforming */
 
-const dateify = ({
+const dateify = <T>({
   obj,
   dateFieldPaths,
 }: {
-  obj: any;
+  obj: object;
   dateFieldPaths: string[];
-}): any => {
+}): object => {
   const newObj = _.cloneDeep(obj);
   _.each(dateFieldPaths, (path) => {
     const hasField = _.has(obj, path);
     if (hasField) {
       const stringVal = _.get(obj, path);
       const dateVal = new Date(stringVal);
-      _.set(newObj, path, dateVal);
+      _.set(newObj as object, path, dateVal);
     }
   });
   return newObj;
@@ -62,13 +60,14 @@ const dateify = ({
 
 /* API Calls */
 
-const getLoggedInUser = (): Promise<{ user: any }> => {
-  const path = "/loggedInUser?" + Math.random(); // the random number avoids using a cached response
+const getLoggedInUser = () => {
+  // the random number avoids using a cached response
+  const path = "/loggedInUser?" + Math.random();
   return niceGET(path).then(({ user }) => {
     const processedUser = dateify({
       obj: user,
       dateFieldPaths: ["createdAt", "updatedAt"],
-    });
+    }) as User;
     return { user: processedUser };
   });
 };
@@ -123,7 +122,7 @@ const getEvents = ({ userId }: { userId: string }) => {
       return dateify({
         obj: event,
         dateFieldPaths: ["datetime", "stopDatetime", "createdAt", "updatedAt"],
-      });
+      }) as Event;
     });
     return { events: processedEventMap };
   });
@@ -156,7 +155,7 @@ const getOccurrences = ({ userId }: { userId: string }) => {
       return dateify({
         obj: event,
         dateFieldPaths: ["datetime", "createdAt", "updatedAt"],
-      });
+      }) as Occurrence;
     });
     return { occurrences: processedOccurrencesMap };
   });
