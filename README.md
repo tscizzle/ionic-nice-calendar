@@ -15,3 +15,11 @@ Bundles the js, css, html, and assets from `src/` and `public/` into the `build/
 ### npx cap sync
 
 Takes the bundled web app in `build/` and updates the platform-specific apps in their directories, e.g. `android/`. The native app inside `android/` can be opened in Android Studio, for example. That is also the native app that would be uploaded to a given platform's app store.
+
+### npx cap open android
+
+Opens the project in Android Studio. You could also open the project (in the `android/` folder) directly from within Android Studio, instead of using this command.
+
+### npx cap run android
+
+Runs the project on a device or in an emulator. You could also run the project directly from within Android Studio, instead of using this command.
