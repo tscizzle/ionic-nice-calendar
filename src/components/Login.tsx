@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React from "react";
 import {
   IonPage,
   IonHeader,
@@ -21,11 +21,11 @@ import { User } from "models";
 
 import logo from "assets/images/calendar.svg";
 
-import "./Home.css";
+import "./Login.css";
 
-type HomeProps = {};
+type LoginFormProps = {};
 
-type HomeState = {
+type LoginFormState = {
   email: string;
   password: string;
   loginErr: string;
@@ -33,7 +33,7 @@ type HomeState = {
   loggedInUser: User | null;
 };
 
-class Home extends React.Component<HomeProps, HomeState> {
+class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
   state = {
     email: "",
     password: "",
@@ -53,14 +53,14 @@ class Home extends React.Component<HomeProps, HomeState> {
     let username = _.isNull(loggedInUser)
       ? ""
       : (loggedInUser as User).username;
-    const shortUsername = _.first(_.split(username, "."));
+    const shortUsername = _.first(_.split(username, "@"));
     return (
       <IonPage>
         <IonHeader>
           <IonToolbar color="primary">
             <IonTitle>Nice Calendar</IonTitle>
             <IonButtons slot="secondary">
-              <IonButton>{username.split(".")[0]}</IonButton>
+              <IonButton>{shortUsername}</IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
@@ -91,7 +91,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             />
           </IonItem>
           <IonButton
-            className="ion-margin"
+            className="ion-margin login-button"
             expand="block"
             onClick={this.attemptLogin}
           >
@@ -140,4 +140,4 @@ class Home extends React.Component<HomeProps, HomeState> {
   };
 }
 
-export default Home;
+export default LoginForm;
